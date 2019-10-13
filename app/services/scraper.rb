@@ -1,18 +1,4 @@
 class Scraper
-  def self.get_expenses
-    login
-    doc = Nokogiri::HTML.parse(browser.html)
-
-    expenses = []
-    doc.css('#table_pregled_placil tr').each do |row|
-      next if row.blank? || row.text.include?('Reklamacija transakcije')
-      expenses << row.text.split(/\n/).reject(&:blank?).map(&:strip)
-    end
-    expenses.reject(&:blank?)
-  end
-
-  private
-
   def self.login(browser)
     capybara_configuration
     url = ENV['MY_BANK_URL']
@@ -29,6 +15,19 @@ class Scraper
   def self.logout
     Capybara.current_session.driver.quit
   end
+
+  def self.get_expenses
+    doc = Nokogiri::HTML.parse(browser.html)
+
+    expenses = []
+    doc.css('#table_pregled_placil tr').each do |row|
+      next if row.blank? || row.text.include?('Reklamacija transakcije')
+      expenses << row.text.split(/\n/).reject(&:blank?).map(&:strip)
+    end
+    expenses.reject(&:blank?)
+  end
+
+  private
 
   def self.capybara_configuration
     Capybara.register_driver :selenium do |app|
