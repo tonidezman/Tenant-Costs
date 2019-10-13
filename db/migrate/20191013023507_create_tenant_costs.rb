@@ -1,3 +1,4 @@
+# typed: true
 class CreateTenantCosts < ActiveRecord::Migration[6.0]
   def change
     create_table :tenant_costs, id: false do |t|

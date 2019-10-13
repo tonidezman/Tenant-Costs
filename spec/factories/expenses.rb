@@ -1,3 +1,4 @@
+# typed: false
 FactoryBot.define do
   factory :expense do
     name "MyString"
