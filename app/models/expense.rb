@@ -1,4 +1,3 @@
 # typed: strong
 
-class Expense < ApplicationRecord
-end
+class Expense < ApplicationRecord; end

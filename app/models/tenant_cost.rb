@@ -1,4 +1,3 @@
 # typed: strong
 
-class TenantCost < ApplicationRecord
-end
+class TenantCost < ApplicationRecord; end
