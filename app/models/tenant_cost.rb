@@ -1,0 +1,2 @@
+class TenantCost < ApplicationRecord
+end
