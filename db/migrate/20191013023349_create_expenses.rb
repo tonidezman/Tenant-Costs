@@ -1,8 +1,10 @@
 # typed: true
+
 class CreateExpenses < ActiveRecord::Migration[6.0]
   def change
     create_table :expenses do |t|
       t.string :name
+      t.decimal :value, precision: 5, scale: 2
       t.string :month
       t.string :year
       t.datetime :expense_at

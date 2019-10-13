@@ -11,28 +11,30 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 2019_10_13_023507) do
+
   # These are extensions that must be enabled in order to support this database
-  enable_extension 'plpgsql'
+  enable_extension "plpgsql"
 
-  create_table 'expenses', force: :cascade do |t|
-    t.string 'name'
-    t.string 'month'
-    t.string 'year'
-    t.datetime 'expense_at'
-    t.datetime 'created_at', precision: 6, null: false
-    t.datetime 'updated_at', precision: 6, null: false
-    t.index %w[month year], name: 'index_expenses_on_month_and_year'
+  create_table "expenses", force: :cascade do |t|
+    t.string "name"
+    t.decimal "value", precision: 5, scale: 2
+    t.string "month"
+    t.string "year"
+    t.datetime "expense_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["month", "year"], name: "index_expenses_on_month_and_year"
   end
 
-  create_table 'tenant_costs', id: false, force: :cascade do |t|
-    t.string 'month'
-    t.string 'year'
-    t.integer 'expenses_sum'
-    t.integer 'paid'
-    t.datetime 'paid_at'
-    t.datetime 'created_at', precision: 6, null: false
-    t.datetime 'updated_at', precision: 6, null: false
-    t.index %w[month year],
-            name: 'index_tenant_costs_on_month_and_year', unique: true
+  create_table "tenant_costs", id: false, force: :cascade do |t|
+    t.string "month"
+    t.string "year"
+    t.decimal "expenses_sum", precision: 5, scale: 2
+    t.decimal "tenant_paid"
+    t.datetime "tenant_paid_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["month", "year"], name: "index_tenant_costs_on_month_and_year", unique: true
   end
+
 end
