@@ -1,2 +1,2 @@
-class ApplicationController < ActionController::Base
-end
+# typed: strong
+class ApplicationController < ActionController::Base; end

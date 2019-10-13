@@ -1,2 +1,2 @@
-module ApplicationHelper
-end
+# typed: strong
+module ApplicationHelper; end
