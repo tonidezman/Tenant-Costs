@@ -6,14 +6,16 @@ default: &default
 development:
   <<: *default
   database: tenant_costs_development
-  user: postgres
+  user: tenant_costs
+  password: pass123
   host: localhost
   port: 5435
 
 test:
   <<: *default
   database: tenant_costs_test
-  user: postgres
+  user: tenant_costs
+  password: pass123
   host: localhost
   port: 5435
 
