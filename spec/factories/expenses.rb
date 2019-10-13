@@ -14,9 +14,9 @@
 # typed: false
 FactoryBot.define do
   factory :expense do
-    name 'MyString'
-    expense_at '2019-10-13 04:33:49'
-    month 'MyString'
-    year 'MyString'
+    name { 'SPL' }
+    expense_at { '2019-10-13 04:33:49' }
+    month { 'Jan' }
+    year { '2019' }
   end
 end
