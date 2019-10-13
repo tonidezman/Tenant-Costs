@@ -25,6 +25,8 @@ class Scraper
       expenses << row.text.split(/\n/).reject(&:blank?).map(&:strip)
     end
     expenses.reject(&:blank?)
+    expenses.shift
+    expenses # this is the headder row
   end
 
   private
