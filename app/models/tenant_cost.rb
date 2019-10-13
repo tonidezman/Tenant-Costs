@@ -2,13 +2,17 @@
 #
 # Table name: tenant_costs
 #
-#  month        :string
-#  year         :string
-#  expenses_sum :integer
-#  paid         :integer
-#  paid_at      :datetime
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
+#  expenses_sum   :decimal(5, 2)
+#  month          :string
+#  tenant_paid    :decimal(, )
+#  tenant_paid_at :datetime
+#  year           :string
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#
+# Indexes
+#
+#  index_tenant_costs_on_month_and_year  (month,year) UNIQUE
 #
 
 # typed: strong

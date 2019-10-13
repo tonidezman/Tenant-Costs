@@ -2,13 +2,18 @@
 #
 # Table name: expenses
 #
-#  id         :integer          not null, primary key
-#  name       :string
-#  month      :string
-#  year       :string
+#  id         :bigint           not null, primary key
 #  expense_at :datetime
+#  month      :string
+#  name       :string
+#  value      :decimal(5, 2)
+#  year       :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#
+# Indexes
+#
+#  index_expenses_on_month_and_year  (month,year)
 #
 
 # typed: false
