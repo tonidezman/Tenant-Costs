@@ -14,6 +14,8 @@ gem 'bootsnap', '>= 1.4.2', require: false
 gem 'sorbet'
 gem 'sorbet-rails'
 gem 'prettier'
+gem 'selenium-webdriver'
+gem 'capybara'
 
 group :development, :test do
   gem 'faker'
