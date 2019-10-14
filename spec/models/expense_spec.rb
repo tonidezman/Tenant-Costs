@@ -49,10 +49,10 @@ RSpec.describe Expense, type: :model do
       ['Bank inc.', current_date - 5.days, 'some text', '-0,10 EUR'],
       ['Bank inc.', current_date - 5.days, 'some text', '-1,70 EUR'],
       ['Bank inc.', current_date - 5.days, 'some text', '-1,07 EUR'],
-      ['VZAJEMNA D.V.Z.', current_date - 5.days, 'some text', '-34,60 EUR'],
+      ['VZAJEMNA', current_date - 5.days, 'some text', '-34,60 EUR'],
       ['Bank inc.', current_date - 5.days, 'some text', '-0,33 EUR'],
       ['Bank inc.', current_date - 5.days, 'some text', '-0,33 EUR'],
-      ['VRTEC VISKI GAJ', current_date - 5.days, 'OSKRBNINE', '-169,63 EUR'],
+      ['VRTEC', current_date - 5.days, 'OSKRBNINE', '-169,63 EUR'],
       ['Bank inc.', current_date - 5.days, 'some text', '-31,50 EUR'],
       ['Bank inc.', current_date - 5.days, 'some text', '-4,52 EUR'],
       ['Bank inc.', current_date - 5.days, 'some text', '-11,40 EUR'],
@@ -68,7 +68,9 @@ RSpec.describe Expense, type: :model do
       ['Bank inc.', current_date - 5.days, 'some text', '-218,79 EUR'],
       ['SPL D.D.', current_date - 5.days, 'DB SEP 2019', '-103,01 EUR'],
       ['Bank inc.', current_date - 5.days, 'some text', '-0,33 EUR'],
-      ['TELEMACH D.O.O.', current_date - 5.days, 'some text', '-43,00 EUR']
+      ['TELEMACH D.O.O.', current_date - 2.days, 'some text', '-43,00 EUR']
+      ['GEN-I, D.O.O.', current_date - 2.days, 'some text', '-52,00 EUR']
+      ['RTV SLOVENIJA', current_date - 3.days, 'some text', '-12,75 EUR']
     ]
   end
 end
