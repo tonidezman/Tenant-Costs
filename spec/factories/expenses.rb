@@ -4,10 +4,10 @@
 #
 #  id         :bigint           not null, primary key
 #  expense_at :datetime
-#  month      :string
+#  month      :integer
 #  name       :string
 #  value      :decimal(5, 2)
-#  year       :string
+#  year       :integer
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
@@ -21,7 +21,7 @@ FactoryBot.define do
   factory :expense do
     name { 'SPL' }
     expense_at { '2019-10-13 04:33:49' }
-    month { 'Jan' }
-    year { '2019' }
+    month { 10 }
+    year { 2_019 }
   end
 end

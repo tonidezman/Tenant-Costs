@@ -4,10 +4,10 @@
 #
 #  id         :bigint           not null, primary key
 #  expense_at :datetime
-#  month      :string
+#  month      :integer
 #  name       :string
 #  value      :decimal(5, 2)
-#  year       :string
+#  year       :integer
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
@@ -37,6 +37,7 @@ RSpec.describe Expense, type: :model do
     end
 
     it 'saves expense only once (idempotent) on multiple runs' do
+      tonko
     end
 
     it 'gets back only valid tenant expenses' do

@@ -4,10 +4,10 @@
 #
 #  id         :bigint           not null, primary key
 #  expense_at :datetime
-#  month      :string
+#  month      :integer
 #  name       :string
 #  value      :decimal(5, 2)
-#  year       :string
+#  year       :integer
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #

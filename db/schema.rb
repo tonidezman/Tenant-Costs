@@ -18,8 +18,8 @@ ActiveRecord::Schema.define(version: 2019_10_13_023507) do
   create_table "expenses", force: :cascade do |t|
     t.string "name"
     t.decimal "value", precision: 5, scale: 2
-    t.string "month"
-    t.string "year"
+    t.integer "month"
+    t.integer "year"
     t.datetime "expense_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -27,8 +27,8 @@ ActiveRecord::Schema.define(version: 2019_10_13_023507) do
   end
 
   create_table "tenant_costs", id: false, force: :cascade do |t|
-    t.string "month"
-    t.string "year"
+    t.integer "month"
+    t.integer "year"
     t.decimal "expenses_sum", precision: 5, scale: 2
     t.decimal "tenant_paid"
     t.datetime "tenant_paid_at"
