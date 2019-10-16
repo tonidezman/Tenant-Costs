@@ -2,7 +2,7 @@
 #
 # Table name: tenant_costs
 #
-#  expenses_sum   :decimal(5, 2)
+#  expenses_sum   :integer
 #  month          :integer
 #  tenant_paid    :decimal(, )
 #  tenant_paid_at :datetime

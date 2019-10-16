@@ -5,7 +5,7 @@ class CreateTenantCosts < ActiveRecord::Migration[6.0]
     create_table :tenant_costs, id: false do |t|
       t.integer :month
       t.integer :year
-      t.decimal :expenses_sum, precision: 5, scale: 2
+      t.integer :expenses_sum
       t.decimal :tenant_paid
       t.datetime :tenant_paid_at
       t.timestamps

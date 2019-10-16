@@ -6,14 +6,15 @@
 #  expense_at :datetime
 #  month      :integer
 #  name       :string
-#  value      :decimal(5, 2)
+#  value      :integer
 #  year       :integer
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
 # Indexes
 #
-#  index_expenses_on_month_and_year  (month,year)
+#  index_expenses_on_month_and_year                     (month,year)
+#  index_expenses_on_month_and_year_and_name_and_value  (month,year,name,value) UNIQUE
 #
 
 # typed: false
@@ -37,7 +38,21 @@ RSpec.describe Expense, type: :model do
     end
 
     it 'saves expense only once (idempotent) on multiple runs' do
-      tonko
+      expect(Expense.count).to eq(0)
+      begin
+        Expense.parse_expense_row(raw_expenses).each(&:save)
+        Expense.parse_expense_row(raw_expenses).each(&:save)
+      rescue ActiveRecord::RecordNotUnique
+        # nothing to do
+      end
+      expect(Expense.count).to eq(4)
+
+      # sanity check, money is important :)
+      expect(Expense.last.value).to eq(-1_275)
+
+      # tenant expense should all be negative numbers
+      expense_values = Expense.all.map(&:value)
+      expect(expense_values).to all(be < 0)
     end
 
     it 'gets back only valid tenant expenses' do
@@ -46,30 +61,6 @@ RSpec.describe Expense, type: :model do
       expenses.each { |expense| counter += 1 if expense.valid? }
       expect(counter).to eq(4)
     end
-
-    it 'raises error if too little elements' do
-    end
-
-    it 'raises error if to much elements' do
-    end
-
-    it 'raises error if tenant expense value is positive integer' do
-    end
-
-    it 'raises error if tenant expense value is zero' do
-    end
-  end
-
-  describe 'expenses are idempotent' do
-    it 'correctly saves expenses only once on single run'
-    it 'correctly saves expenses only once on multiple runs'
-  end
-
-  def raw_date(days_ago, current_date: nil)
-    if current_date.nil?
-      current_date = DateTime.now.beginning_of_month + 20.days
-    end
-    (current_date - days_ago).strftime('%d.%m.%Y')
   end
 
   def raw_expenses
@@ -110,5 +101,12 @@ RSpec.describe Expense, type: :model do
       ['GEN-I, D.O.O.', raw_date(2.days), 'some text', '-52,00 EUR'],
       ['RTV SLOVENIJA', raw_date(3.days), 'some text', '-12,75 EUR']
     ]
+  end
+
+  def raw_date(days_ago, current_date: nil)
+    if current_date.nil?
+      current_date = DateTime.now.beginning_of_month + 20.days
+    end
+    (current_date - days_ago).strftime('%d.%m.%Y')
   end
 end

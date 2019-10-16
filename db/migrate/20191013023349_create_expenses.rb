@@ -4,7 +4,7 @@ class CreateExpenses < ActiveRecord::Migration[6.0]
   def change
     create_table :expenses do |t|
       t.string :name
-      t.decimal :value, precision: 5, scale: 2
+      t.integer :value
       t.integer :month
       t.integer :year
       t.datetime :expense_at
@@ -12,5 +12,6 @@ class CreateExpenses < ActiveRecord::Migration[6.0]
     end
 
     add_index(:expenses, %i[month year])
+    add_index(:expenses, %i[month year name value], unique: true)
   end
 end
