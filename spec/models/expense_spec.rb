@@ -73,12 +73,6 @@ RSpec.describe Expense, type: :model do
   end
 
   describe '.parse_expense_rows' do
-    it 'correctly parses raw record data from the scraper' do
-      expect { Expense.parse_expense_rows(raw_expenses) }.not_to raise_error(
-                      InvalidExpense
-                    )
-    end
-
     it 'converts raw expense data to Expense objects' do
       expect(
         Expense.parse_expense_rows(raw_expenses).all? { |expense|
