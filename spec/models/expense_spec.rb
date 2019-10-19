@@ -57,23 +57,24 @@ RSpec.describe Expense, type: :model do
       expect(TenantCost.first.expenses_sum).to eq(45_076)
       expect(Expense.count).to eq(4)
 
+      # create tenant cost for previous month which tenant did not yet payed
+      prev_month = raw_date(1.month).to_date
+      create(
+        :tenant_cost,
+        expenses_sum: 21_076, month: prev_month.month, year: prev_month.year
+      )
+
       # tenant pays the monthly expenses for previous month
       Expense.process(raw_only_tenant_payment)
-      expect(TenantCost.count).to eq(1)
-      tenant_cost = TenantCost.first
-
-      # create tenant cost for previous month which tenant did not yet payed
-      # binding.pry
-
-      binding.pry
-      x = create(:tenant_cost)
+      expect(TenantCost.count).to eq(2)
+      tenant_cost =
+        TenantCost.find_by(month: prev_month.month, year: prev_month.year)
 
       expect(tenant_cost.tenant_paid).to eq(45_076)
-      expect(tenant_cost.tenant_paid_at).to raw_date(5.days.ago)
-      month, year = raw_date.split('.')[0, 2]
-      prev_month = month - 1
-      expect(tenant_cost.month).to eq(prev_month)
-      expect(tenant_cost.year).to eq(year)
+      expect(tenant_cost.tenant_paid_at).to raw_date(5.days).to_date
+      prev_month = raw_date(1.month)
+      expect(tenant_cost.month).to eq(prev_month.month)
+      expect(tenant_cost.year).to eq(prev_month.year)
     end
   end
 

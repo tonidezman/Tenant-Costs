@@ -52,10 +52,23 @@ class Expense < ApplicationRecord
         # after 18th this is current month unless previous month payment has been payed
         pay_day = expense.expense_at.day
         day_that_most_expenses_are_billed = 18
+
         if pay_day <= day_that_most_expenses_are_billed
           year = (expense.expense_at - 1.month).year
           month = (expense.expense_at - 1.month).month
-          TenantCost.find_by(year: year, month: month)
+          tenant_cost = TenantCost.find_by(year: year, month: month)
+
+          if tenant_cost.nil?
+            Rails.logger.info(
+              "TenantCost not found for date: #{month}/#{year}, tenant_paid: #{
+                expense.value
+              }, name: #{expense.name}"
+            )
+          else
+            tenant_cost.tenant_paid = expense.value
+            tenant_cost.tenant_paid_at = expense.expense_at
+            tenant_cost.save
+          end
         end
 
         expense.value
