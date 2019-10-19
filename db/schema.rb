@@ -28,10 +28,10 @@ ActiveRecord::Schema.define(version: 2019_10_13_023507) do
   end
 
   create_table "tenant_costs", id: false, force: :cascade do |t|
-    t.integer "month"
-    t.integer "year"
-    t.integer "expenses_sum"
-    t.decimal "tenant_paid"
+    t.integer "month", null: false
+    t.integer "year", null: false
+    t.integer "expenses_sum", null: false
+    t.integer "tenant_paid", default: 0
     t.datetime "tenant_paid_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

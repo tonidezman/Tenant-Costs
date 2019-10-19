@@ -23,8 +23,37 @@ class Expense < ApplicationRecord
   validate :must_be_valid_expense
   VALID_EXPENSES = %w[SPL RTV GEN-I TELEMACH]
 
-  def self.parse_expense_row(raw_expenses)
-    # ['GEN-I, D.O.O.', '03.10.2019', 'some text', '-52,00 EUR'],
+  def self.expense_not_in_db?(expense)
+    Expense.where(
+      month: expense.month,
+      year: expense.year,
+      name: expense.name,
+      value: expense.value
+    )
+      .one?
+  end
+
+  def self.process(raw_expenses)
+    expenses_sum = 0
+    first_expense = nil
+    parse_expense_rows(raw_expenses).each do |expense|
+      first_expense = expense if first_expense.nil?
+
+      if expense.valid?
+        expenses_sum += expense.value
+        expense.save if Expense.expense_not_in_db?(expense)
+      end
+    end
+    tenant_cost =
+      TenantCost.find_or_initialize_by(
+        month: first_expense.month, year: first_expense.year
+      )
+
+    tenant_cost.expenses_sum = expenses_sum.abs
+    tenant_cost.save
+  end
+
+  def self.parse_expense_rows(raw_expenses)
     result = []
     raw_expenses.each do |raw_expense|
       name, expense_at, _, raw_value = raw_expense

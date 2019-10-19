@@ -22,16 +22,35 @@
 require 'rails_helper'
 
 RSpec.describe Expense, type: :model do
-  describe '.parse_expense_row' do
+  describe '.process' do
+    it 'creates TenantCost row for the sum of all valid expenses' do
+      expect(TenantCost.count).to eq(0)
+      Expense.process(raw_expenses_missing_one_expense)
+      expect(TenantCost.count).to eq(1)
+      expect(TenantCost.first.tenant_paid).to eq(0)
+      expect(TenantCost.first.expenses_sum).to eq(19_801)
+
+      # on multiple runs it doesn't create new TenantCost row
+      Expense.process(raw_expenses_only)
+
+      expect(TenantCost.count).to eq(1)
+      expect(TenantCost.first.expenses_sum).to eq(21_076)
+      expect(Expense.count).to eq(4)
+
+      # it updates new TenantCost row if the sum is changed
+    end
+  end
+
+  describe '.parse_expense_rows' do
     it 'correctly parses raw record data from the scraper' do
-      expect { Expense.parse_expense_row(raw_expenses) }.not_to raise_error(
+      expect { Expense.parse_expense_rows(raw_expenses) }.not_to raise_error(
                       InvalidExpense
                     )
     end
 
     it 'converts raw expense data to Expense objects' do
       expect(
-        Expense.parse_expense_row(raw_expenses).all? { |expense|
+        Expense.parse_expense_rows(raw_expenses).all? { |expense|
           expense.is_a? Expense
         }
       ).to be true
@@ -40,8 +59,8 @@ RSpec.describe Expense, type: :model do
     it 'saves expense only once (idempotent) on multiple runs' do
       expect(Expense.count).to eq(0)
       begin
-        Expense.parse_expense_row(raw_expenses).each(&:save)
-        Expense.parse_expense_row(raw_expenses).each(&:save)
+        Expense.parse_expense_rows(raw_expenses).each(&:save)
+        Expense.parse_expense_rows(raw_expenses).each(&:save)
       rescue ActiveRecord::RecordNotUnique
         # nothing to do
       end
@@ -56,7 +75,7 @@ RSpec.describe Expense, type: :model do
     end
 
     it 'gets back only valid tenant expenses' do
-      expenses = Expense.parse_expense_row(raw_expenses)
+      expenses = Expense.parse_expense_rows(raw_expenses)
       counter = 0
       expenses.each { |expense| counter += 1 if expense.valid? }
       expect(counter).to eq(4)
@@ -97,6 +116,25 @@ RSpec.describe Expense, type: :model do
       ['Bank inc.', raw_date(5.days), 'some text', '-218,79 EUR'],
       ['SPL D.D.', raw_date(5.days), 'DB SEP 2019', '-103,01 EUR'],
       ['Bank inc.', raw_date(5.days), 'some text', '-0,33 EUR'],
+      ['TELEMACH D.O.O.', raw_date(2.days), 'some text', '-43,00 EUR'],
+      ['GEN-I, D.O.O.', raw_date(2.days), 'some text', '-52,00 EUR'],
+      ['RTV SLOVENIJA', raw_date(3.days), 'some text', '-12,75 EUR']
+    ]
+  end
+
+  def raw_expenses_missing_one_expense
+    [
+      ['MARY SMITH', raw_date(5.days), 'Drugo', '450,78 EUR'],
+      ['SPL D.D.', raw_date(5.days), 'DB SEP 2019', '-103,01 EUR'],
+      ['TELEMACH D.O.O.', raw_date(2.days), 'some text', '-43,00 EUR'],
+      ['GEN-I, D.O.O.', raw_date(2.days), 'some text', '-52,00 EUR']
+    ]
+  end
+
+  def raw_expenses_only
+    [
+      ['MARY SMITH', raw_date(5.days), 'Drugo', '450,78 EUR'],
+      ['SPL D.D.', raw_date(5.days), 'DB SEP 2019', '-103,01 EUR'],
       ['TELEMACH D.O.O.', raw_date(2.days), 'some text', '-43,00 EUR'],
       ['GEN-I, D.O.O.', raw_date(2.days), 'some text', '-52,00 EUR'],
       ['RTV SLOVENIJA', raw_date(3.days), 'some text', '-12,75 EUR']

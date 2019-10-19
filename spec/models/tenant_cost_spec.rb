@@ -2,11 +2,11 @@
 #
 # Table name: tenant_costs
 #
-#  expenses_sum   :integer
-#  month          :integer
-#  tenant_paid    :decimal(, )
+#  expenses_sum   :integer          not null
+#  month          :integer          not null
+#  tenant_paid    :integer          default(0)
 #  tenant_paid_at :datetime
-#  year           :integer
+#  year           :integer          not null
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #
