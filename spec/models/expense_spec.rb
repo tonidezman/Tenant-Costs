@@ -67,11 +67,7 @@ RSpec.describe Expense, type: :model do
       expect(Expense.count).to eq(4)
 
       # sanity check, money is important :)
-      expect(Expense.last.value).to eq(-1_275)
-
-      # tenant expense should all be negative numbers
-      expense_values = Expense.all.map(&:value)
-      expect(expense_values).to all(be < 0)
+      expect(Expense.last.value).to eq(1_275)
     end
 
     it 'gets back only valid tenant expenses' do

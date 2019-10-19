@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 2019_10_13_023507) do
     t.index ["month", "year"], name: "index_expenses_on_month_and_year"
   end
 
-  create_table "tenant_costs", id: false, force: :cascade do |t|
+  create_table "tenant_costs", force: :cascade do |t|
     t.integer "month", null: false
     t.integer "year", null: false
     t.integer "expenses_sum", null: false
@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(version: 2019_10_13_023507) do
     t.datetime "tenant_paid_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["month", "year"], name: "index_tenant_costs_on_month_and_year", unique: true
+    t.index ["month", "year"], name: "index_tenant_costs_on_month_and_year"
   end
 
 end

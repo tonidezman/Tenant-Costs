@@ -2,6 +2,7 @@
 #
 # Table name: tenant_costs
 #
+#  id             :bigint           not null, primary key
 #  expenses_sum   :integer          not null
 #  month          :integer          not null
 #  tenant_paid    :integer          default(0)
@@ -12,7 +13,7 @@
 #
 # Indexes
 #
-#  index_tenant_costs_on_month_and_year  (month,year) UNIQUE
+#  index_tenant_costs_on_month_and_year  (month,year)
 #
 
 # typed: false

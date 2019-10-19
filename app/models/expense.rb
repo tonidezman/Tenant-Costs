@@ -49,7 +49,7 @@ class Expense < ApplicationRecord
         month: first_expense.month, year: first_expense.year
       )
 
-    tenant_cost.expenses_sum = expenses_sum.abs
+    tenant_cost.expenses_sum = expenses_sum
     tenant_cost.save
   end
 
@@ -59,11 +59,12 @@ class Expense < ApplicationRecord
       name, expense_at, _, raw_value = raw_expense
       expense_at = expense_at.to_date
       value = MoneyParser.parse(raw_value)
+
       result <<
         Expense.new(
           name: name,
           expense_at: expense_at,
-          value: value,
+          value: value.abs,
           month: expense_at.month,
           year: expense_at.year
         )
