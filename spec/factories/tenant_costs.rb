@@ -19,10 +19,10 @@
 # typed: false
 FactoryBot.define do
   factory :tenant_cost do
-    month { 'MyString' }
-    year { 'MyString' }
-    expenses_sum { 1 }
-    paid { 1 }
-    paid_at { '2019-10-13 04:35:07' }
+    month { 1 }
+    year { 2_019 }
+    expenses_sum { 0 }
+    paid { 0 }
+    paid_at { nil }
   end
 end

@@ -22,16 +22,17 @@
 require 'rails_helper'
 
 RSpec.describe Expense, type: :model do
+  before { ENV['MY_TENANTS_NAME'] = 'Bob' }
+
   describe '#tenant_payment?' do
     it "returns false if it doesn't match MY_TENANTS_NAME env" do
       expense = build(:expense, value: 100, name: 'Bob')
-      ENV['MY_TENANTS_NAME'] = 'bob'
       expect(expense.tenant_payment?).to be true
     end
 
     it 'returns true if it matches tenant data' do
-      expense = build(:expense, value: 100, name: 'Bob')
       ENV['MY_TENANTS_NAME'] = 'marry'
+      expense = build(:expense, value: 100, name: 'Bob')
       expect(expense.tenant_payment?).to be false
     end
   end
@@ -56,15 +57,21 @@ RSpec.describe Expense, type: :model do
       expect(TenantCost.first.expenses_sum).to eq(45_076)
       expect(Expense.count).to eq(4)
 
-      # tenant pays the monthly expenses
+      # tenant pays the monthly expenses for previous month
       Expense.process(raw_only_tenant_payment)
       expect(TenantCost.count).to eq(1)
       tenant_cost = TenantCost.first
 
+      # create tenant cost for previous month which tenant did not yet payed
+      # binding.pry
+
+      # create(:tenant_cost)
+
       expect(tenant_cost.tenant_paid).to eq(45_076)
       expect(tenant_cost.tenant_paid_at).to raw_date(5.days.ago)
       month, year = raw_date.split('.')[0, 2]
-      expect(tenant_cost.month).to eq(month)
+      prev_month = month - 1
+      expect(tenant_cost.month).to eq(prev_month)
       expect(tenant_cost.year).to eq(year)
     end
   end
@@ -147,7 +154,7 @@ RSpec.describe Expense, type: :model do
   end
 
   def raw_only_tenant_payment
-    [['MARY SMITH', raw_date(5.days), 'Drugo', '210,76 EUR']]
+    [['BOB SMITH', raw_date(5.days), 'Drugo', '450,76 EUR']]
   end
 
   def raw_expenses_missing_one_expense

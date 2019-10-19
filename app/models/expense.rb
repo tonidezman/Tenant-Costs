@@ -48,7 +48,17 @@ class Expense < ApplicationRecord
         expenses_sum += expense.value
         expense.save if Expense.expense_not_in_db?(expense)
       elsif expense.tenant_payment?
+        # if expense is before 18 than this is the previous months payment
+        # after 18th this is current month unless previous month payment has been payed
+        pay_day = expense.expense_at.day
+        day_that_most_expenses_are_billed = 18
+        if pay_day <= day_that_most_expenses_are_billed
+          year = (expense.expense_at - 1.month).year
+          month = (expense.expense_at - 1.month).month
+          TenantCost.find_by(year: year, month: month)
+        end
 
+        expense.value
       end
     end
     tenant_cost =
