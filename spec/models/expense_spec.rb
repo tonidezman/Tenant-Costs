@@ -65,6 +65,7 @@ RSpec.describe Expense, type: :model do
         TenantCost.find_by(month: prev_month.month, year: prev_month.year)
 
       expect(tenant_cost.tenant_paid).to eq(45_076)
+      expect(tenant_cost.expenses_sum).to eq(tenant_cost.tenant_paid)
       expect(tenant_cost.tenant_paid_at).to eq(raw_date(5.days).to_date)
       expect(tenant_cost.month).to eq(prev_month.month)
       expect(tenant_cost.year).to eq(prev_month.year)
