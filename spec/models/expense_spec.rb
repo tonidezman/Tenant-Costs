@@ -38,6 +38,15 @@ RSpec.describe Expense, type: :model do
   end
 
   describe '.process' do
+    context 'Correctly handles Tenant payments' do
+      it 'saves tenant payment for previous month (before 18th in month)' do
+      end
+
+      it 'saves tenant payment for current month (on 28 in this month)' do
+        # we need to check that previous month was payed and current months expenses are equal what tenant has payed
+      end
+    end
+
     it 'correctly saves tvo SPL costs to the databases' do
       # you should not miss two expenses
       # tenant should pay everything and not just one cost
@@ -57,8 +66,8 @@ RSpec.describe Expense, type: :model do
       expect(Expense.count).to eq(4)
 
       # tenant pays the monthly expenses for previous month
-      Expense.process(raw_expenses_only_prev_month)
-      Expense.process(raw_only_tenant_payment)
+      Expense.process(raw_expenses_prev_month(offset: 1.month))
+      Expense.process(raw_only_tenant_payment(offset: 5.days))
       expect(TenantCost.count).to eq(2)
       prev_month = raw_date(1.month).to_date
       tenant_cost =
@@ -143,8 +152,8 @@ RSpec.describe Expense, type: :model do
     ]
   end
 
-  def raw_only_tenant_payment
-    [['BOB SMITH', raw_date(5.days), 'Drugo', '450,76 EUR']]
+  def raw_only_tenant_payment(offset:, tenant_name: 'BOB SMITH')
+    [[tenant_name, raw_date(offset), 'Drugo', '450,76 EUR']]
   end
 
   def raw_expenses_missing_one_expense
@@ -156,13 +165,13 @@ RSpec.describe Expense, type: :model do
     ]
   end
 
-  def raw_expenses_only_prev_month
+  def raw_expenses_prev_month(offset:, tenant_name: 'BOB SMITH')
     [
-      ['MARY SMITH', raw_date(1.month), 'Drugo', '450,78 EUR'],
-      ['SPL D.D.', raw_date(1.month), 'DB SEP 2019', '-103,01 EUR'],
-      ['TELEMACH D.O.O.', raw_date(1.month), 'some text', '-43,00 EUR'],
-      ['GEN-I, D.O.O.', raw_date(1.month), 'some text', '-52,00 EUR'],
-      ['RTV SLOVENIJA', raw_date(1.month), 'some text', '-12,75 EUR']
+      [tenant_name, raw_date(offset), 'Drugo', '450,78 EUR'],
+      ['SPL D.D.', raw_date(offset), 'DB SEP 2019', '-103,01 EUR'],
+      ['TELEMACH D.O.O.', raw_date(offset), 'some text', '-43,00 EUR'],
+      ['GEN-I, D.O.O.', raw_date(offset), 'some text', '-52,00 EUR'],
+      ['RTV SLOVENIJA', raw_date(offset), 'some text', '-12,75 EUR']
     ]
   end
 
