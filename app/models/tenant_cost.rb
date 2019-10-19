@@ -20,4 +20,13 @@
 
 class TenantCost < ApplicationRecord
   validates_uniqueness_of %i[month year]
+  before_save :add_monthly_apartment_expense
+
+  MONTHLY_APARTMENT_EXPENSE = 24_000
+
+  private
+
+  def add_monthly_apartment_expense
+    self.expenses_sum += MONTHLY_APARTMENT_EXPENSE
+  end
 end
