@@ -41,6 +41,7 @@ class Expense < ApplicationRecord
   def self.process(raw_expenses)
     expenses_sum = 0
     first_expense = nil
+    tenant_payments = []
     parse_expense_rows(raw_expenses).each do |expense|
       first_expense = expense if first_expense.nil?
 
@@ -48,27 +49,42 @@ class Expense < ApplicationRecord
         expenses_sum += expense.value
         expense.save if Expense.expense_not_in_db?(expense)
       elsif expense.tenant_payment?
+        tenant_payments << expense
         # if expense is before 18 than this is the previous months payment
         # after 18th this is current month unless previous month payment has been payed
         pay_day = expense.expense_at.day
         day_that_most_expenses_are_billed = 18
+        prev_year = (expense.expense_at - 1.month).year
+        prev_month = (expense.expense_at - 1.month).month
+        curr_year = (expense.expense_at).year
+        curr_month = (expense.expense_at).month
 
         if pay_day <= day_that_most_expenses_are_billed
-          year = (expense.expense_at - 1.month).year
-          month = (expense.expense_at - 1.month).month
-          tenant_cost = TenantCost.find_by(year: year, month: month)
+          tenant_cost = TenantCost.find_by(year: prev_year, month: prev_month)
 
           if tenant_cost.nil?
             Rails.logger.info(
-              "TenantCost not found for date: #{month}/#{year}, tenant_paid: #{
-                expense.value
-              }, name: #{expense.name}"
+              "TenantCost not found for date: #{prev_month}/#{
+                prev_year
+              }, tenant_paid: #{expense.value}, name: #{expense.name}"
             )
           else
             tenant_cost.tenant_paid = expense.value
             tenant_cost.tenant_paid_at = expense.expense_at
             tenant_cost.save
           end
+        else
+          # check if previous month has been payed
+          prev_month_tenant_cost = TenantCost.find_by(month: prev_month, year: prev_year)
+          is_payed_prev_month_cost = prev_month_tenant_cost.nil? || prev_month_tenant_cost.tenant_paid > 0
+          if is_payed_prev_month_cost
+          else
+            prev_month_tenant_cost = TenantCost.find_by(year:
+          end
+
+
+
+          binding.pry
         end
 
         expense.value
