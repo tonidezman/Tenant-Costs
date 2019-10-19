@@ -79,7 +79,8 @@ class Expense < ApplicationRecord
         month: first_expense.month, year: first_expense.year
       )
 
-    tenant_cost.expenses_sum = expenses_sum
+    tenant_cost.expenses_sum =
+      expenses_sum + TenantCost::MONTHLY_APARTMENT_EXPENSE
     tenant_cost.save
   end
 

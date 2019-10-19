@@ -52,27 +52,20 @@ RSpec.describe Expense, type: :model do
 
       # on multiple runs it doesn't create new TenantCost row
       Expense.process(raw_expenses_only)
-
       expect(TenantCost.count).to eq(1)
       expect(TenantCost.first.expenses_sum).to eq(45_076)
       expect(Expense.count).to eq(4)
 
-      # create tenant cost for previous month which tenant did not yet payed
-      prev_month = raw_date(1.month).to_date
-      create(
-        :tenant_cost,
-        expenses_sum: 21_076, month: prev_month.month, year: prev_month.year
-      )
-
       # tenant pays the monthly expenses for previous month
+      Expense.process(raw_expenses_only_prev_month)
       Expense.process(raw_only_tenant_payment)
       expect(TenantCost.count).to eq(2)
+      prev_month = raw_date(1.month).to_date
       tenant_cost =
         TenantCost.find_by(month: prev_month.month, year: prev_month.year)
 
       expect(tenant_cost.tenant_paid).to eq(45_076)
-      expect(tenant_cost.tenant_paid_at).to raw_date(5.days).to_date
-      prev_month = raw_date(1.month)
+      expect(tenant_cost.tenant_paid_at).to eq(raw_date(5.days).to_date)
       expect(tenant_cost.month).to eq(prev_month.month)
       expect(tenant_cost.year).to eq(prev_month.year)
     end
@@ -165,6 +158,16 @@ RSpec.describe Expense, type: :model do
       ['SPL D.D.', raw_date(5.days), 'DB SEP 2019', '-103,01 EUR'],
       ['TELEMACH D.O.O.', raw_date(2.days), 'some text', '-43,00 EUR'],
       ['GEN-I, D.O.O.', raw_date(2.days), 'some text', '-52,00 EUR']
+    ]
+  end
+
+  def raw_expenses_only_prev_month
+    [
+      ['MARY SMITH', raw_date(1.month), 'Drugo', '450,78 EUR'],
+      ['SPL D.D.', raw_date(1.month), 'DB SEP 2019', '-103,01 EUR'],
+      ['TELEMACH D.O.O.', raw_date(1.month), 'some text', '-43,00 EUR'],
+      ['GEN-I, D.O.O.', raw_date(1.month), 'some text', '-52,00 EUR'],
+      ['RTV SLOVENIJA', raw_date(1.month), 'some text', '-12,75 EUR']
     ]
   end
 
