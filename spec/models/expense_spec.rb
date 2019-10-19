@@ -22,22 +22,50 @@
 require 'rails_helper'
 
 RSpec.describe Expense, type: :model do
+  describe '#tenant_payment?' do
+    it "returns false if it doesn't match MY_TENANTS_NAME env" do
+      expense = build(:expense, value: 100, name: 'Bob')
+      ENV['MY_TENANTS_NAME'] = 'bob'
+      expect(expense.tenant_payment?).to be true
+    end
+
+    it 'returns true if it matches tenant data' do
+      expense = build(:expense, value: 100, name: 'Bob')
+      ENV['MY_TENANTS_NAME'] = 'marry'
+      expect(expense.tenant_payment?).to be false
+    end
+  end
+
   describe '.process' do
+    it 'correctly saves tvo SPL costs to the databases' do
+      # you should not miss two expenses
+      # tenant should pay everything and not just one cost
+    end
+
     it 'creates TenantCost row for the sum of all valid expenses' do
       expect(TenantCost.count).to eq(0)
       Expense.process(raw_expenses_missing_one_expense)
       expect(TenantCost.count).to eq(1)
       expect(TenantCost.first.tenant_paid).to eq(0)
-      expect(TenantCost.first.expenses_sum).to eq(19_801)
+      expect(TenantCost.first.expenses_sum).to eq(43_801)
 
       # on multiple runs it doesn't create new TenantCost row
       Expense.process(raw_expenses_only)
 
       expect(TenantCost.count).to eq(1)
-      expect(TenantCost.first.expenses_sum).to eq(21_076)
+      expect(TenantCost.first.expenses_sum).to eq(45_076)
       expect(Expense.count).to eq(4)
 
-      # it updates new TenantCost row if the sum is changed
+      # tenant pays the monthly expenses
+      Expense.process(raw_only_tenant_payment)
+      expect(TenantCost.count).to eq(1)
+      tenant_cost = TenantCost.first
+
+      expect(tenant_cost.tenant_paid).to eq(45_076)
+      expect(tenant_cost.tenant_paid_at).to raw_date(5.days.ago)
+      month, year = raw_date.split('.')[0, 2]
+      expect(tenant_cost.month).to eq(month)
+      expect(tenant_cost.year).to eq(year)
     end
   end
 
@@ -116,6 +144,10 @@ RSpec.describe Expense, type: :model do
       ['GEN-I, D.O.O.', raw_date(2.days), 'some text', '-52,00 EUR'],
       ['RTV SLOVENIJA', raw_date(3.days), 'some text', '-12,75 EUR']
     ]
+  end
+
+  def raw_only_tenant_payment
+    [['MARY SMITH', raw_date(5.days), 'Drugo', '210,76 EUR']]
   end
 
   def raw_expenses_missing_one_expense
