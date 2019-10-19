@@ -19,7 +19,7 @@
 # typed: strong
 
 class TenantCost < ApplicationRecord
-  validates_uniqueness_of %i[month year]
+  validates :month, uniqueness: { scope: :year }
   before_save :add_monthly_apartment_expense
 
   MONTHLY_APARTMENT_EXPENSE = 24_000
