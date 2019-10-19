@@ -30,7 +30,7 @@ class Expense < ApplicationRecord
       name: expense.name,
       value: expense.value
     )
-      .one?
+      .blank?
   end
 
   def self.process(raw_expenses)
@@ -41,6 +41,7 @@ class Expense < ApplicationRecord
 
       if expense.valid?
         expenses_sum += expense.value
+
         expense.save if Expense.expense_not_in_db?(expense)
       end
     end
