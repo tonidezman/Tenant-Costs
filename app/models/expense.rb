@@ -22,6 +22,11 @@
 class Expense < ApplicationRecord
   validate :must_be_valid_expense
   VALID_EXPENSES = %w[SPL RTV GEN-I TELEMACH]
+  TENANT = ENV['MY_TENANTS_NAME']
+
+  def tenant_payment?
+    name.downcase.match?(ENV['MY_TENANTS_NAME'].downcase)
+  end
 
   def self.expense_not_in_db?(expense)
     Expense.where(
@@ -41,8 +46,9 @@ class Expense < ApplicationRecord
 
       if expense.valid?
         expenses_sum += expense.value
-
         expense.save if Expense.expense_not_in_db?(expense)
+      elsif expense.tenant_payment?
+
       end
     end
     tenant_cost =
