@@ -22,7 +22,7 @@ FactoryBot.define do
     month { 1 }
     year { 2_019 }
     expenses_sum { 0 }
-    paid { 0 }
-    paid_at { nil }
+    tenant_paid { 0 }
+    tenant_paid_at { nil }
   end
 end

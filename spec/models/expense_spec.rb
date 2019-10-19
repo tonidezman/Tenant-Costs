@@ -65,7 +65,8 @@ RSpec.describe Expense, type: :model do
       # create tenant cost for previous month which tenant did not yet payed
       # binding.pry
 
-      # create(:tenant_cost)
+      binding.pry
+      x = create(:tenant_cost)
 
       expect(tenant_cost.tenant_paid).to eq(45_076)
       expect(tenant_cost.tenant_paid_at).to raw_date(5.days.ago)
