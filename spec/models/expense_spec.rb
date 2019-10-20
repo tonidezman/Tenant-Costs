@@ -41,9 +41,17 @@ RSpec.describe Expense, type: :model do
     context 'Correctly handles Tenant payments' do
       it 'saves tenant payment for previous month (before 18th in month)' do
         # We have expenses that are not yet payed from the previous month
-        Expense.process(raw_expenses(offset: 1.month))
-        # tenant pays for the expenses on the 15th
+        Expense.process(raw_expenses_only(offset: 1.month))
+        expect(TenantCost.count).to eq(1)
+        tenant_cost = TenantCost.first
+        expect(tenant_cost.tenant_payment).to be_zero
+
+        # tenant pays for the expenses on the 16th
         Expense.process(raw_only_tenant_payment(offset: 5.days))
+        expect(TenantCost.count).to eq(1)
+        expect(tenant_cost.expenses_sum).to eq(tenant_cost.tenant_payment)
+
+        raise # old code
 
         # because tenant didn't pay for the last month this should get marked a payed
         expect(TenantCost.count).to eq(2)
