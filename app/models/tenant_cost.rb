@@ -22,4 +22,10 @@ class TenantCost < ApplicationRecord
   validates :month, uniqueness: { scope: :year }
 
   MONTHLY_APARTMENT_EXPENSE = 24_000
+
+  def self.process(tenant_payments, expenses)
+    # process just the current month expense
+
+    p :tonko
+  end
 end

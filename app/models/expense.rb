@@ -38,71 +38,25 @@ class Expense < ApplicationRecord
       .blank?
   end
 
-  def self.process(raw_expenses)
-    expenses_sum = 0
-    first_expense = nil
+  def self.process(raw_expenses_mixed)
     tenant_payments = []
-    parse_expense_rows(raw_expenses).each do |expense|
-      first_expense = expense if first_expense.nil?
+    expenses = []
 
+    parse_expense_rows(raw_expenses_mixed).each do |expense|
       if expense.valid?
-        expenses_sum += expense.value
+        expenses << expense
         expense.save if Expense.expense_not_in_db?(expense)
       elsif expense.tenant_payment?
         tenant_payments << expense
-        # if expense is before 18 than this is the previous months payment
-        # after 18th this is current month unless previous month payment has been payed
-        pay_day = expense.expense_at.day
-        day_that_most_expenses_are_billed = 18
-        prev_year = (expense.expense_at - 1.month).year
-        prev_month = (expense.expense_at - 1.month).month
-        curr_year = (expense.expense_at).year
-        curr_month = (expense.expense_at).month
-
-        if pay_day <= day_that_most_expenses_are_billed
-          tenant_cost = TenantCost.find_by(year: prev_year, month: prev_month)
-
-          if tenant_cost.nil?
-            Rails.logger.info(
-              "TenantCost not found for date: #{prev_month}/#{
-                prev_year
-              }, tenant_paid: #{expense.value}, name: #{expense.name}"
-            )
-          else
-            tenant_cost.tenant_paid = expense.value
-            tenant_cost.tenant_paid_at = expense.expense_at
-            tenant_cost.save
-          end
-        else
-          # check if previous month has been payed
-          prev_month_tenant_cost = TenantCost.find_by(month: prev_month, year: prev_year)
-          is_payed_prev_month_cost = prev_month_tenant_cost.nil? || prev_month_tenant_cost.tenant_paid > 0
-          if is_payed_prev_month_cost
-          else
-            prev_month_tenant_cost = TenantCost.find_by(year:
-          end
-
-
-
-          binding.pry
-        end
-
-        expense.value
       end
     end
-    tenant_cost =
-      TenantCost.find_or_initialize_by(
-        month: first_expense.month, year: first_expense.year
-      )
 
-    tenant_cost.expenses_sum =
-      expenses_sum + TenantCost::MONTHLY_APARTMENT_EXPENSE
-    tenant_cost.save
+    TenantCost.process(tenant_payments, expenses)
   end
 
-  def self.parse_expense_rows(raw_expenses)
+  def self.parse_expense_rows(raw_expenses_mixed)
     result = []
-    raw_expenses.each do |raw_expense|
+    raw_expenses_mixed.each do |raw_expense|
       name, expense_at, _, raw_value = raw_expense
       expense_at = expense_at.to_date
       value = MoneyParser.parse(raw_value)
