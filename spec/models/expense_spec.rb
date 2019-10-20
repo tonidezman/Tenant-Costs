@@ -54,7 +54,14 @@ RSpec.describe Expense, type: :model do
       end
 
       it 'saves tenant payment for current month (on 28 in this month)' do
-        # we need to check that previous month was payed and current months expenses are equal what tenant has payed
+        # Expenses for the current month
+        Expense.process(raw_expenses_only(offset: 5.days))
+        # Tenant pays on the 20th for the current month expenses
+        Expense.process(raw_only_tenant_payment(offset: 0.days))
+
+        expect(TenantCost.count).to eq(1)
+        tenant_cost = TenantCost.first
+        expect(tenant_cost.expenses_sum).to eq(tenant_cost.tenant_paid)
       end
     end
 
