@@ -1,24 +1,17 @@
-# README
+# How to
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Scrape data
+```bash
+$ bundle exec rake scraper:start
+```
 
-Things you may want to cover:
+## Send email
+```bash
+$ TENANT_EMAIL=mail@example.com bundle exec rake email:send
+```
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+## check data
+```bash
+# expenses and tenant payments for the last three months
+$ bundle exec rake show:tenant_costs
+```
