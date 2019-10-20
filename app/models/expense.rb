@@ -24,20 +24,6 @@ class Expense < ApplicationRecord
   VALID_EXPENSES = %w[SPL RTV GEN-I TELEMACH]
   TENANT = ENV['MY_TENANTS_NAME']
 
-  def tenant_payment?
-    name.downcase.match?(ENV['MY_TENANTS_NAME'].downcase)
-  end
-
-  def self.expense_not_in_db?(expense)
-    Expense.where(
-      month: expense.month,
-      year: expense.year,
-      name: expense.name,
-      value: expense.value
-    )
-      .blank?
-  end
-
   def self.process(raw_expenses_mixed)
     tenant_payments = []
     expenses = []
@@ -54,9 +40,24 @@ class Expense < ApplicationRecord
     TenantCost.process(tenant_payments, expenses)
   end
 
+  def tenant_payment?
+    name.downcase.match?(ENV['MY_TENANTS_NAME'].downcase)
+  end
+
+  def self.expense_not_in_db?(expense)
+    Expense.where(
+      month: expense.month,
+      year: expense.year,
+      name: expense.name,
+      value: expense.value
+    )
+      .blank?
+  end
+
   def self.parse_expense_rows(raw_expenses_mixed)
     result = []
     raw_expenses_mixed.each do |raw_expense|
+      next if raw_expense.blank?
       name, expense_at, _, raw_value = raw_expense
       expense_at = expense_at.to_date
       value = MoneyParser.parse(raw_value)

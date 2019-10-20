@@ -1,21 +1,5 @@
 class Scraper
   def self.get_expenses
-    login
-    doc = Nokogiri::HTML.parse(browser.html)
-
-    expenses = []
-    doc.css('#table_pregled_placil tr').each do |row|
-      next if row.blank? || row.text.include?('Reklamacija transakcije')
-      expenses << row.text.split(/\n/).reject(&:blank?).map(&:strip)
-    end
-    expenses.reject(&:blank?)
-    expenses.shift
-    expenses # this is the header row
-
-    # You probably want to logout when the user clicks "sign out"
-  end
-
-  def self.login
     capybara_configuration
     url = ENV['MY_BANK_URL']
     browser = Capybara.current_session
@@ -26,6 +10,17 @@ class Scraper
 
     sleep 30
     browser.click_link('Pregled prometa').click
+
+    doc = Nokogiri::HTML.parse(browser.html)
+
+    expenses = []
+    doc.css('#table_pregled_placil tr').each do |row|
+      next if row.blank? || row.text.include?('Reklamacija transakcije')
+      expenses << row.text.split(/\n/).reject(&:blank?).map(&:strip)
+    end
+    expenses.reject(&:blank?)
+    expenses.shift
+    expenses # this is the header row
   end
 
   def self.logout
