@@ -44,33 +44,13 @@ RSpec.describe Expense, type: :model do
         Expense.process(raw_expenses_only(offset: 1.month))
         expect(TenantCost.count).to eq(1)
         tenant_cost = TenantCost.first
-        expect(tenant_cost.tenant_payment).to be_zero
+        expect(tenant_cost.tenant_paid).to be_zero
 
         # tenant pays for the expenses on the 16th
         Expense.process(raw_only_tenant_payment(offset: 5.days))
         expect(TenantCost.count).to eq(1)
-        expect(tenant_cost.expenses_sum).to eq(tenant_cost.tenant_payment)
-
-        raise # old code
-
-        # because tenant didn't pay for the last month this should get marked a payed
-        expect(TenantCost.count).to eq(2)
-        prev_month = raw_date(1.month).to_date
-        prev_month_tenant_cost =
-          TenantCost.find_by(month: prev_month.month, year: prev_month.year)
-        expect(prev_month_tenant_cost.tenant_paid).to eq(45_076)
-
-        # current months tenant cost are not yet payed
-        curr_month = raw_date(1.day).to_date
-        curr_month_tenant_cost =
-          TenantCost.find_by(month: curr_month.month, year: curr_month.year)
-        expect(curr_month_tenant_cost.tenant_paid).to be_zero
-
-        # tenant pays current month on the 20th
-        Expense.process(raw_only_tenant_payment(offset: 0.days))
-        curr_month_tenant_cost =
-          TenantCost.find_by(month: curr_month.month, year: curr_month.year)
-        expect(curr_month_tenant_cost.tenant_paid).to eq(45_076)
+        tenant_cost = TenantCost.first
+        expect(tenant_cost.expenses_sum).to eq(tenant_cost.tenant_paid)
       end
 
       it 'saves tenant payment for current month (on 28 in this month)' do

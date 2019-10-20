@@ -60,7 +60,7 @@ class TenantCost < ApplicationRecord
     expenses_sum == tenant_paid && tenant_paid_at.present?
   end
 
-  def log_errors(tenant_cost, tenant_payment)
+  def self.log_errors(tenant_cost, tenant_payment)
     if tenant_cost.blank?
       Rails.logger.error "TenantCost.find_by(month: #{month}, year: #{
                            year
