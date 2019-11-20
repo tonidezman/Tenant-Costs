@@ -37,6 +37,25 @@ RSpec.describe Expense, type: :model do
     end
   end
 
+  describe '.get_current_months_expenses' do
+    it 'returns correct months expenses' do
+      current_month = Time.now.month
+      create(:expense, month: current_month)
+      create(:expense, month: current_month)
+      create(:expense, month: current_month - 1)
+      create(:expense, month: current_month - 1)
+      create(:expense, month: current_month - 2)
+      expect(Expense.get_current_months_expenses.count).to eq(2)
+    end
+  end
+
+  describe '#to_s' do
+    it 'returns human friendly string for expense' do
+      expense = build(:expense, value: 10_077, month: 10, year: 2_020)
+      expect(expense.to_s).to eq('SPL 100.77 EUR 2020-10')
+    end
+  end
+
   describe '.process' do
     context 'Correctly handles Tenant payments' do
       it 'saves tenant payment for previous month (before 18th in month)' do

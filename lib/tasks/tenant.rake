@@ -2,10 +2,9 @@ namespace :tenant do
   desc 'Starts Scraper'
   task scraper_start: :environment do
     all_expenses = Scraper.get_expenses
-    Expense.process(all_expenses)
     binding.pry
 
-    p :tonko
+    Expense.process(all_expenses)
   end
 
   desc "sends the email to ENV['TENANT_EMAIL']"

@@ -18,9 +18,11 @@ class Scraper
       next if row.blank? || row.text.include?('Reklamacija transakcije')
       expenses << row.text.split(/\n/).reject(&:blank?).map(&:strip)
     end
-    expenses.reject(&:blank?)
+    expenses.reject!(&:blank?)
+
+    # first line is the header row
     expenses.shift
-    expenses # this is the header row
+    expenses
   end
 
   def self.logout

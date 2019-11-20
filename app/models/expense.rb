@@ -24,6 +24,10 @@ class Expense < ApplicationRecord
   VALID_EXPENSES = %w[SPL RTV GEN-I TELEMACH]
   TENANT = ENV['MY_TENANTS_NAME']
 
+  def self.get_current_months_expenses
+    Expense.where(month: Time.now.month)
+  end
+
   def self.process(raw_expenses_mixed)
     tenant_payments = []
     expenses = []
@@ -82,6 +86,10 @@ class Expense < ApplicationRecord
     end
 
     errors.add(:name, 'this is not valid expense') unless is_valid_expense
+  end
+
+  def to_s
+    "#{name} #{value / 100.0} EUR #{year}-#{month}"
   end
 end
 
