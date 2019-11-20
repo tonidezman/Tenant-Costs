@@ -23,7 +23,7 @@ class Expense < ApplicationRecord
   validate :must_be_valid_expense
   VALID_EXPENSES = %w[SPL RTV GEN-I TELEMACH]
   TENANT = ENV['MY_TENANTS_NAME']
-  RENT = 240_000
+  RENT = 24_000
 
   def self.print_current_month_expenses(rent: RENT)
     expenses = current_month_expenses
