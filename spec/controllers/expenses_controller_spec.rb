@@ -1,12 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe ExpensesController, type: :controller do
-
-  describe "GET #index" do
-    it "returns http success" do
-      get :index
-      expect(response).to have_http_status(:success)
-    end
+  describe 'GET #index' do
   end
-
 end
