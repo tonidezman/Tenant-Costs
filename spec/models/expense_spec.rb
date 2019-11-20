@@ -37,7 +37,36 @@ RSpec.describe Expense, type: :model do
     end
   end
 
-  describe '.get_current_months_expenses' do
+  describe 'cents_to_eur helper function' do
+    it 'returns correct print of the cents to eur' do
+      expense = build(:expense, value: 100)
+      expect(expense.cents_to_eur).to eq('1.00 EUR')
+      expense.value = 33_569
+      expect(expense.cents_to_eur).to eq('335.69 EUR')
+    end
+  end
+
+  describe '.print_current_month_expenses' do
+    it 'correctly displays all current month expenses' do
+      current_month = Time.now.month
+      create(:expense, month: current_month, value: 100, name: 'SPL')
+      create(:expense, month: current_month, value: 200, name: 'telemach')
+      create(:expense, month: current_month, value: 300, name: 'rtv')
+
+      expected = <<~EOL
+        1.00 € SPL (2019-11)
+        2.00 € telemach (2019-11)
+        3.00 € rtv (2019-11)
+        4.00 € najemnina
+        ---------------------------------
+        10.00 €
+      EOL
+
+      expect(Expense.print_current_month_expenses(rent: 400)).to eq(expected)
+    end
+  end
+
+  describe '.current_month_expenses' do
     it 'returns correct months expenses' do
       current_month = Time.now.month
       create(:expense, month: current_month)
@@ -45,14 +74,14 @@ RSpec.describe Expense, type: :model do
       create(:expense, month: current_month - 1)
       create(:expense, month: current_month - 1)
       create(:expense, month: current_month - 2)
-      expect(Expense.get_current_months_expenses.count).to eq(2)
+      expect(Expense.current_month_expenses.count).to eq(2)
     end
   end
 
   describe '#to_s' do
     it 'returns human friendly string for expense' do
       expense = build(:expense, value: 10_077, month: 10, year: 2_020)
-      expect(expense.to_s).to eq('SPL 100.77 EUR 2020-10')
+      expect(expense.to_s).to eq('100.77 € SPL (2020-10)')
     end
   end
 

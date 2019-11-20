@@ -23,8 +23,20 @@ class Expense < ApplicationRecord
   validate :must_be_valid_expense
   VALID_EXPENSES = %w[SPL RTV GEN-I TELEMACH]
   TENANT = ENV['MY_TENANTS_NAME']
+  RENT = 240_000
 
-  def self.get_current_months_expenses
+  def self.print_current_month_expenses(rent: RENT)
+    expenses = current_month_expenses
+    sum = expenses.map(&:value).sum + rent
+
+    result = ''
+    result << expenses.map(&:to_s).join("\n")
+    result << "\n#{Expense.cents_to_eur(rent)} najemnina\n"
+    result << '-' * 33 + "\n"
+    result << "#{Expense.cents_to_eur(sum)}\n"
+  end
+
+  def self.current_month_expenses
     Expense.where(month: Time.now.month)
   end
 
@@ -89,7 +101,18 @@ class Expense < ApplicationRecord
   end
 
   def to_s
-    "#{name} #{value / 100.0} EUR #{year}-#{month}"
+    "#{cents_to_eur} #{name} (#{year}-#{month})"
+  end
+
+  def self.cents_to_eur(value)
+    eur = value / 100.0
+    result = '%0.2f' % eur
+    result << ' €'
+    result
+  end
+
+  def cents_to_eur
+    self.class.cents_to_eur(value)
   end
 end
 
