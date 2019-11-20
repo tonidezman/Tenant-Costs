@@ -1,16 +1,15 @@
-# How to
-
-first run
+Run
 ```bash
 bundle exec rake tenant:scraper_start
 ```
-visit `localhost:3000` to see the current months expenses
+Visit `localhost:3000` to see the current months expenses
 
 
 
 
 
 
+# How to
 
 ## Scrape data
 ```bash
