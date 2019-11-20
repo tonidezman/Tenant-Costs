@@ -40,9 +40,9 @@ RSpec.describe Expense, type: :model do
   describe 'cents_to_eur helper function' do
     it 'returns correct print of the cents to eur' do
       expense = build(:expense, value: 100)
-      expect(expense.cents_to_eur).to eq('1.00 EUR')
+      expect(expense.cents_to_eur).to eq('1.00 €')
       expense.value = 33_569
-      expect(expense.cents_to_eur).to eq('335.69 EUR')
+      expect(expense.cents_to_eur).to eq('335.69 €')
     end
   end
 
