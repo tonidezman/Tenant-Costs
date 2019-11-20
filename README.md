@@ -1,10 +1,6 @@
-Run
-
-```bash
-bundle exec rake tenant:scraper_start
-```
-
-Visit `localhost:3000` to see the current months expenses
+1. Make sure you terminate rails app on localhost:3000
+2. bundle exec rake tenant:scraper_start
+3. Visit `localhost:3000` to see the current months expenses
 
 # How to
 
