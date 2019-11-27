@@ -59,7 +59,7 @@ RSpec.describe Expense, type: :model do
         3.00 € rtv (2019-11)
         4.00 € najemnina
         ---------------------------------
-        10.00 €
+        10,00 €
       EOL
 
       expect(Expense.print_current_month_expenses(rent: 400)).to eq(expected)
