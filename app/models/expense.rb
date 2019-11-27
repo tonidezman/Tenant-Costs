@@ -33,7 +33,7 @@ class Expense < ApplicationRecord
     result << expenses.map(&:to_s).join("\n")
     result << "\n#{Expense.cents_to_eur(rent)} najemnina\n"
     result << '-' * 33 + "\n"
-    result << "#{Expense.cents_to_eur(sum)}\n"
+    result << "#{Expense.cents_to_eur(sum).gsub('.', ',')}\n"
   end
 
   def self.current_month_expenses
