@@ -62,7 +62,13 @@ RSpec.describe Expense, type: :model do
         10,00 €
       EOL
 
-      expect(Expense.print_current_month_expenses(rent: 400)).to eq(expected)
+      actual =
+        Expense.print_current_month_expenses(rent: 400).gsub(
+          /\(.+\)/,
+          '(YYYY-MM)'
+        )
+      expected = expected.gsub(/\(.+\)/, '(YYYY-MM)')
+      expect(actual).to eq(expected)
     end
   end
 
